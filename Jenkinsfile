@@ -16,6 +16,7 @@ pipeline {
     // If package.json lives in a subfolder, set APP_DIR='subfolder'; otherwise '.'
     APP_DIR = '.'
   }
+  
   options { timestamps() }
 
   stages {
