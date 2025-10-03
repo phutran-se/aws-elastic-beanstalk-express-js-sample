@@ -1,15 +1,17 @@
+
+// Jenkinsfile (root) — Node 16 + Snyk + Build & Push
 pipeline {
   agent any
   environment {
-    // Talk to Docker-in-Docker (DinD) over TLS
+    // Talk to Docker-in-Docker (DinD) over TLS (From Task 2)
     DOCKER_HOST       = 'tcp://docker:2376'
     DOCKER_CERT_PATH  = '/certs/client'
     DOCKER_TLS_VERIFY = '1'
 
-    // Your forked repo and Docker Hub repo
-    GIT_URL    = 'https://github.com/phutran-se/ISEC6000_P2_Test'
-    IMAGE_NAME = 'phutranse/express-app'
-    TAG        = "build-${env.BUILD_NUMBER}"
+    // My forked repo and Docker Hub repo & Tag
+    GIT_URL    = 'https://github.com/phutran-se/Project2-Compose'
+    IMAGE_NAME = 'phutranse/aws-express-app'
+    TAG        = "build-${env.BUILD_NUMBER}" 
 
     // If package.json lives in a subfolder, set APP_DIR='subfolder'; otherwise '.'
     APP_DIR = '.'
@@ -19,19 +21,8 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        // Pull code from your fork; or keep "checkout scm" if job already points to the repo
-        checkout scm
-      }
-    }
-    stage("Debug Test") {
-      steps {
-        sh '''
-          echo "[DEBUG] Host: $HOSTNAME ; WORKSPACE=$WORKSPACE"
-          ls -la "$WORKSPACE"
-
-          docker run --rm -v "$WORKSPACE":/app -w /app node:16 \
-            sh -c "pwd && ls -la && test -f package.json && head -n 5 package.json || (echo '[ERROR] package.json not found' && exit 1)"
-        '''
+        // Pull code from my forked repo; or keep "checkout scm" if job already points to the repo
+        git branch: 'main', url: "${GIT_URL}"
       }
     }
     stage('Install Dependencies (Node 16)') {
@@ -85,7 +76,7 @@ pipeline {
       }
     }
 
-    stage('Push to Docker Hub') {
+    stage('Push Docker image to Docker Hub') {
       steps {
         // Login and push using Jenkins credentials (ID=dockerhub)
         withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
@@ -100,7 +91,7 @@ pipeline {
 
   post {
     always {
-      // Evidence for the report (adjust as needed)
+      // Archive evidence for the report (Snyk JSON + Dockerfile)
       archiveArtifacts artifacts: 'Dockerfile', onlyIfSuccessful: false
       cleanWs()
     }
