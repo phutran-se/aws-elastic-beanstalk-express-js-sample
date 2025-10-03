@@ -95,7 +95,7 @@ pipeline {
   post {
     always {
       // Archive evidence for the report (Snyk JSON + Dockerfile)
-      archiveArtifacts artifacts: 'Dockerfile', onlyIfSuccessful: false
+      archiveArtifacts artifacts: 'Dockerfile, snyk-result.json', onlyIfSuccessful: false
       cleanWs()
     }
   }
