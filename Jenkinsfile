@@ -65,7 +65,8 @@ pipeline {
               -v "$WORKSPACE":/app -w /app \
               snyk/snyk:docker snyk test \
               --file=package.json \
-              --severity-threshold=high
+              --severity-threshold=high \
+              --json-file-output=/app/snyk-result.json
           '''
         }
       }
