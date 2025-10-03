@@ -9,23 +9,24 @@ pipeline {
     DOCKER_TLS_VERIFY = '1'
 
     // My forked repo and Docker Hub repo & Tag
-    GIT_URL    = 'https://github.com/phutran-se/Project2-Compose'
+    // GIT_URL    = 'https://github.com/phutran-se/Project2-Compose' // No need
     IMAGE_NAME = 'phutranse/aws-express-app'
     TAG        = "build-${env.BUILD_NUMBER}" 
 
     // If package.json lives in a subfolder, set APP_DIR='subfolder'; otherwise '.'
     APP_DIR = '.'
   }
-  
+
   options { timestamps() }
 
   stages {
-    stage('Checkout') {
+    stage('Checkout SCM') {
       steps {
-        // Pull code from my forked repo; or keep "checkout scm" if job already points to the repo
-        git branch: 'main', url: "${GIT_URL}"
+        echo "Source code has been checked out by Jenkins SCM."
+        sh 'ls -la'
       }
     }
+
     stage('Install Dependencies (Node 16)') {
       steps {
         // Run Node 16 in a disposable container; mount Jenkins workspace and run npm install
