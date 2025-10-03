@@ -9,7 +9,7 @@ pipeline {
     DOCKER_TLS_VERIFY = '1'
 
     // My forked repo and Docker Hub repo & Tag
-    // GIT_URL    = 'https://github.com/phutran-se/Project2-Compose' // No need
+    // GIT_URL    = 'https://github.com/phutran-se/Project2-Compose' // No use
     IMAGE_NAME = 'phutranse/aws-express-app'
     TAG        = "build-${env.BUILD_NUMBER}" 
 
